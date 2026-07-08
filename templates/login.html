@@ -6,6 +6,9 @@
     {% if error %}
         <div class="error-message">{{ error }}</div>
     {% endif %}
+    {% if success %}
+        <div class="success-message">{{ success }}</div>
+    {% endif %}
     <form method="POST" action="/login" class="login-form">
         <div class="form-group">
             <label for="username">用户名</label>
