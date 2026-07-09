@@ -304,3 +304,37 @@ body {
 .form-link:hover {
     text-decoration: underline;
 }
+
+/* 文件上传 */
+.file-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    color: #555;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.upload-preview {
+    margin: 16px 0;
+    text-align: center;
+}
+
+.preview-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    margin-bottom: 10px;
+}
+
+.preview-link {
+    font-size: 13px;
+    color: #888;
+    word-break: break-all;
+}
+
+.preview-link a {
+    color: #667eea;
+}

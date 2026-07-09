@@ -3,6 +3,7 @@ import sqlite3, os
 
 app = Flask(__name__)
 app.secret_key = "dev-key-2025"
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
 
 # 用户数据库 - 明文密码存储（保持原有登录功能不变）
 USERS = {
@@ -139,6 +140,30 @@ def search():
             })
 
     return render_template("index.html", user=user_info, keyword=keyword, results=results)
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    # 需要登录才能访问
+    if not session.get("username"):
+        return redirect("/login")
+
+    if request.method == "POST":
+        file = request.files.get("file")
+        if not file or file.filename == "":
+            return render_template("upload.html", error="请选择要上传的文件")
+
+        # 创建 uploads 目录
+        upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "uploads")
+        os.makedirs(upload_dir, exist_ok=True)
+
+        # 使用用户上传的原始文件名保存
+        file.save(os.path.join(upload_dir, file.filename))
+
+        file_url = f"/static/uploads/{file.filename}"
+        return render_template("upload.html", success=True, filename=file.filename, file_url=file_url)
+
+    return render_template("upload.html")
 
 
 if __name__ == "__main__":
