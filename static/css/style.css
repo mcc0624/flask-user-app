@@ -338,3 +338,8 @@ body {
 .preview-link a {
     color: #667eea;
 }
+
+/* 充值卡片 */
+.recharge-card {
+    margin-top: 24px;
+}

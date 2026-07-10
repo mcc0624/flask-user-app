@@ -46,9 +46,19 @@ def init_db():
         )
     """)
 
+    # 添加 balance 字段（兼容已有数据库）
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN balance REAL DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+
     # 插入默认用户，使用 INSERT OR IGNORE 防止重复插入
     cursor.execute("INSERT OR IGNORE INTO users (username, password, email, phone) VALUES ('admin', 'admin123', 'admin@example.com', '13800138000')")
     cursor.execute("INSERT OR IGNORE INTO users (username, password, email, phone) VALUES ('alice', 'alice2025', 'alice@example.com', '13900139001')")
+
+    # 设置默认用户余额
+    cursor.execute("UPDATE users SET balance = 99999 WHERE username = 'admin'")
+    cursor.execute("UPDATE users SET balance = 100 WHERE username = 'alice'")
 
     conn.commit()
     conn.close()
@@ -164,6 +174,51 @@ def upload():
         return render_template("upload.html", success=True, filename=file.filename, file_url=file_url)
 
     return render_template("upload.html")
+
+
+@app.route("/profile")
+def profile():
+    user_id = request.args.get("user_id", "")
+
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    sql = f"SELECT * FROM users WHERE id = {user_id}"
+    print(f"[PROFILE SQL] {sql}")
+    cursor.execute(sql)
+    row = cursor.fetchone()
+    conn.close()
+
+    user_data = None
+    if row:
+        user_data = {
+            "id": row[0],
+            "username": row[1],
+            "email": row[3],
+            "phone": row[4],
+            "balance": row[5] if len(row) > 5 else 0
+        }
+
+    return render_template("profile.html", user=user_data)
+
+
+@app.route("/recharge", methods=["POST"])
+def recharge():
+    user_id = request.form.get("user_id", "")
+    amount = request.form.get("amount", "0")
+
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    sql = f"UPDATE users SET balance = balance + {amount} WHERE id = {user_id}"
+    print(f"[RECHARGE SQL] {sql}")
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+
+    return redirect(f"/profile?user_id={user_id}")
 
 
 if __name__ == "__main__":
