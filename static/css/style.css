@@ -343,3 +343,49 @@ body {
 .recharge-card {
     margin-top: 24px;
 }
+
+/* 动态页面内容 */
+.page-content-card {
+    text-align: left;
+}
+
+.page-content-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #444;
+}
+
+.page-content-body h2,
+.page-content-body h3,
+.page-content-body h4 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.page-content-body h2 {
+    font-size: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.page-content-body h3 {
+    font-size: 17px;
+}
+
+.page-content-body h4 {
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.page-content-body p {
+    margin-bottom: 12px;
+}
+
+.page-content-body ul {
+    margin: 8px 0 16px 20px;
+}
+
+.page-content-body li {
+    margin-bottom: 6px;
+}
