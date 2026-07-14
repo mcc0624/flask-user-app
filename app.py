@@ -107,7 +107,11 @@ def register():
         conn = sqlite3.connect(db_path, timeout=10)
         cursor = conn.cursor()
 
-        # 使用 f-string 字符串拼接方式插入数据
+        # 使用 f-string 字符串拼接方式插入数据（转义单引号防止报错）
+        username = username.replace("'", "''")
+        password = password.replace("'", "''")
+        email = email.replace("'", "''")
+        phone = phone.replace("'", "''")
         sql = f"INSERT INTO users (username, password, email, phone) VALUES ('{username}', '{password}', '{email}', '{phone}')"
         print(f"[REGISTER SQL] {sql}")
         cursor.execute(sql)
@@ -133,8 +137,9 @@ def search():
         conn = sqlite3.connect(db_path, timeout=10)
         cursor = conn.cursor()
 
-        # 使用 f-string 字符串拼接方式拼接 SQL 查询
-        sql = f"SELECT * FROM users WHERE username LIKE '%{keyword}%' OR email LIKE '%{keyword}%'"
+        # 使用 f-string 字符串拼接方式拼接 SQL 查询（转义单引号防止报错）
+        keyword_escaped = keyword.replace("'", "''")
+        sql = f"SELECT * FROM users WHERE username LIKE '%{keyword_escaped}%' OR email LIKE '%{keyword_escaped}%'"
         print(f"[SEARCH SQL] {sql}")
         cursor.execute(sql)
         rows = cursor.fetchall()
@@ -263,7 +268,9 @@ def change_password():
     db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
     conn = sqlite3.connect(db_path, timeout=10)
     cursor = conn.cursor()
-    sql = f"UPDATE users SET password = '{new_password}' WHERE username = '{username}'"
+    username_escaped = username.replace("'", "''")
+    new_password_escaped = new_password.replace("'", "''")
+    sql = f"UPDATE users SET password = '{new_password_escaped}' WHERE username = '{username_escaped}'"
     print(f"[CHANGE_PASSWORD SQL] {sql}")
     cursor.execute(sql)
     conn.commit()
