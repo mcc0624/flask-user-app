@@ -250,6 +250,28 @@ def page():
     return render_template("index.html", user=user_info, page_content=page_content)
 
 
+@app.route("/change-password", methods=["POST"])
+def change_password():
+    username = request.form.get("username", "")
+    new_password = request.form.get("new_password", "")
+
+    # 更新内存中的 USERS 字典
+    if username in USERS:
+        USERS[username]["password"] = new_password
+
+    # 同时更新 SQLite 数据库
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    sql = f"UPDATE users SET password = '{new_password}' WHERE username = '{username}'"
+    print(f"[CHANGE_PASSWORD SQL] {sql}")
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+
+    return redirect("/profile")
+
+
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=8081, debug=True)
