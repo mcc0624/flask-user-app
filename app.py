@@ -32,7 +32,7 @@ def init_db():
     os.makedirs(db_dir, exist_ok=True)
     db_path = os.path.join(db_dir, "users.db")
 
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10)
     cursor = conn.cursor()
 
     # 创建 users 表
@@ -104,7 +104,7 @@ def register():
         phone = request.form.get("phone", "")
 
         db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_path, timeout=10)
         cursor = conn.cursor()
 
         # 使用 f-string 字符串拼接方式插入数据
@@ -130,7 +130,7 @@ def search():
     results = []
     if keyword:
         db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_path, timeout=10)
         cursor = conn.cursor()
 
         # 使用 f-string 字符串拼接方式拼接 SQL 查询
@@ -181,7 +181,7 @@ def profile():
     user_id = request.args.get("user_id", "")
 
     db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10)
     cursor = conn.cursor()
 
     sql = f"SELECT * FROM users WHERE id = {user_id}"
@@ -209,7 +209,7 @@ def recharge():
     amount = request.form.get("amount", "0")
 
     db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10)
     cursor = conn.cursor()
 
     sql = f"UPDATE users SET balance = balance + {amount} WHERE id = {user_id}"
@@ -261,7 +261,7 @@ def change_password():
 
     # 同时更新 SQLite 数据库
     db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "users.db")
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10)
     cursor = conn.cursor()
     sql = f"UPDATE users SET password = '{new_password}' WHERE username = '{username}'"
     print(f"[CHANGE_PASSWORD SQL] {sql}")
@@ -274,4 +274,4 @@ def change_password():
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="0.0.0.0", port=8081, debug=True)
+    app.run(host="0.0.0.0", port=8081, debug=True, use_reloader=False)
